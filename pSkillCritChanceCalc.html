@@ -70,7 +70,7 @@
             }
 
             // Calculate final chance
-            const finalChance = skillChance * strBonus[strParam] * buffPer + buffDiff;
+            const finalChance = Math.round((skillChance * strBonus[strParam] * buffPer + buffDiff) * 10);
 
             // Display result
             document.getElementById('result').textContent = `Final Chance: ${finalChance.toFixed(3)}`;
