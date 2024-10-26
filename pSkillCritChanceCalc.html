@@ -1,136 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Final Chance Calculator -->
-    <title>Шанс Крит. Атк. Физ. умения</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        h1 { color: #333; }
-        form { margin-bottom: 20px; }
-        label { display: block; margin-top: 10px; }
-        input, button { padding: 8px; margin-top: 5px; }
-    </style>
+	<title>Шанс Крит. Атк. Физ. умения</title>
+	<style>
+		body { font-family: Arial, sans-serif; }
+		h1 { color: #333; }
+		form { margin-bottom: 20px; }
+		label { display: block; margin-top: 10px; }
+		input, button { padding: 8px; margin-top: 5px; }
+	</style>
 </head>
 <body>
 	<!-- Calculate Final Chance -->
-    <h1>Шанс Крит. Атк. Физ. умения</h1>
-    <form id="calculatorForm">
+	<h1>Шанс Крит. Атк. Физ. умения</h1>
+	<form id="calculatorForm">
 		<!-- STR Parameter (Integer) -->
-        <label for="strParam">СИЛ: </label>
-        <input type="number" id="strParam" name="strParam" min="0" max="200" required><br>
+		<label for="strParam">СИЛ: </label>
+		<input type="number" id="strParam" name="strParam" min="0" max="200" required><br>
 
 		<!-- Skill Chance (Decimal) -->
-        <label for="skillChance">Базовый шанс: </label>
-        <input type="number" id="skillChance" name="skillChance" step="0.01" required><br>
+		<label for="skillChance">Базовый шанс: </label>
+		<input type="number" id="skillChance" name="skillChance" step="0.01" required><br>
 		
 		<!-- P. Skill Crit. Chance Buff Percent Array (Comma-separated) -->
 		<label for="buffPerArray">Атакующий - (%) Шанс Крит. Атк. Физ. умений (Через ,): </label>
-        <input type="text" id="buffPerArray" name="buffPerArray" placeholder="5,10,15"><br>
+		<input type="text" id="buffPerArray" name="buffPerArray" placeholder="5,10,15"><br>
 		<!-- P. Skill Crit. Chance Buff Diff Array (Comma-separated) -->
-        <label for="buffDiffArray">Атакующий - (+) Шанс Крит. Атк. Физ. умений (Через ,): </label>
-        <input type="text" id="buffDiffArray" name="buffDiffArray" placeholder="200,300"><br>
+		<label for="buffDiffArray">Атакующий - (+) Шанс Крит. Атк. Физ. умений (Через ,): </label>
+		<input type="text" id="buffDiffArray" name="buffDiffArray" placeholder="200,300"><br>
 		
 		<!-- P. Skill Crit. Defence Chance Buff Percent Array (Comma-separated) -->
-        <label for="defBuffPerArray">Цель - (%) Шанс получения урона от Физ. Крит. Атк. (Через ,): </label>
-        <input type="text" id="defBuffPerArray" name="defBuffPerArray" placeholder="-5,-10,-15"><br>
+		<label for="defBuffPerArray">Цель - (%) Шанс получения урона от Физ. Крит. Атк. (Через ,): </label>
+		<input type="text" id="defBuffPerArray" name="defBuffPerArray" placeholder="-5,-10,-15"><br>
 		<!-- P. Skill Crit. Defence Chance Buff Diff Array (Comma-separated) -->
-        <label for="defBuffDiffArray">Цель - (+) Шанс получения урона от Физ. Крит. Атк. (Через ,): </label>
-        <input type="text" id="defBuffDiffArray" name="defBuffDiffArray" placeholder="-200,-300"><br>
+		<label for="defBuffDiffArray">Цель - (+) Шанс получения урона от Физ. Крит. Атк. (Через ,): </label>
+		<input type="text" id="defBuffDiffArray" name="defBuffDiffArray" placeholder="-200,-300"><br>
 		
 		<!-- Checkbox to toggle max limit of 90% -->
-        <label for="maxLimit">Ограничить финальный шанс до 90%:</label>
-        <input type="checkbox" id="maxLimit" name="maxLimit" checked><br>
+		<label for="maxLimit">Ограничить финальный шанс до 90%:</label>
+		<input type="checkbox" id="maxLimit" name="maxLimit" checked><br>
 		
 		<label for="trialCount">Количество попыток:</label>
-        <input type="number" id="trialCount" name="trialCount" min="1" value="1000" required><br>
+		<input type="number" id="trialCount" name="trialCount" min="1" value="1000" required><br>
 
-        <button type="button" onclick="calculateFinalChance()">Calculate</button>
-    </form>
+		<button type="button" onclick="calculateFinalChance()">Calculate</button>
+	</form>
 
-    <h2 id="attackChance"></h2>
-    <h2 id="attackerChance"></h2>
-    <h2 id="targetDefence"></h2>
-    <h2 id="result"></h2>
+	<h2 id="attackChance"></h2>
+	<h2 id="attackerChance"></h2>
+	<h2 id="targetDefence"></h2>
+	<h2 id="result"></h2>
 	<h2 id="critCount"></h2>
 
-    <script>
-        // Equivalent array to PHP's strBonus array
-        const strBonus = [
-            0, 0.497, 0.5, 0.504, 0.507, 0.511, 0.515, 0.518, 0.522, 0.526, 0.53, 0.535, 0.539, 0.543, 0.548, 0.553, 0.558,
-            0.562, 0.567, 0.573, 0.578, 0.583, 0.589, 0.595, 0.601, 0.607, 0.613, 0.619, 0.626, 0.632, 0.639, 0.646, 0.653,
-            0.66, 0.668, 0.675, 0.683, 0.691, 0.699, 0.707, 0.716, 0.725, 0.734, 0.743, 0.752, 0.761, 0.771, 0.781, 0.791,
-            0.801, 0.811, 0.822, 0.833, 0.844, 0.855, 0.867, 0.878, 0.89, 0.902, 0.914, 0.927, 0.939, 0.952, 0.965, 0.979,
-            0.992, 1.006, 1.02, 1.034, 1.048, 1.062, 1.077, 1.092, 1.107, 1.122, 1.137, 1.152, 1.168, 1.184, 1.2, 1.216,
-            1.232, 1.248, 1.265, 1.281, 1.298, 1.315, 1.332, 1.349, 1.366, 1.383, 1.401, 1.418, 1.435, 1.453, 1.47, 1.488,
-            1.506, 1.523, 1.541, 1.559, 1.576, 1.594, 1.611, 1.629, 1.647, 1.664, 1.682, 1.699, 1.716, 1.734, 1.751, 1.768,
-            1.785, 1.802, 1.819, 1.836, 1.852, 1.869, 1.885, 1.901, 1.917, 1.933, 1.949, 1.965, 1.98, 1.995, 2.01, 2.025,
-            2.04, 2.055, 2.069, 2.083, 2.097, 2.111, 2.125, 2.138, 2.152, 2.165, 2.178, 2.19, 2.203, 2.215, 2.227, 2.239,
-            2.25, 2.262, 2.273, 2.284, 2.295, 2.306, 2.316, 2.326, 2.336, 2.346, 2.356, 2.365, 2.374, 2.383, 2.392, 2.401,
-            2.41, 2.418, 2.426, 2.434, 2.442, 2.449, 2.457, 2.464, 2.471, 2.478, 2.485, 2.491, 2.498, 2.504, 2.51, 2.516,
-            2.522, 2.528, 2.534, 2.539, 2.544, 2.55, 2.555, 2.559, 2.564, 2.569, 2.574, 2.578, 2.582, 2.587, 2.591, 2.595,
-            2.599, 2.602, 2.606, 2.61, 2.613, 2.617, 2.62, 2.623
-        ];
+	<script>
+		// Equivalent array to PHP's strBonus array
+		const strBonus = [
+			0, 0.497, 0.5, 0.504, 0.507, 0.511, 0.515, 0.518, 0.522, 0.526, 0.53, 0.535, 0.539, 0.543, 0.548, 0.553, 0.558,
+			0.562, 0.567, 0.573, 0.578, 0.583, 0.589, 0.595, 0.601, 0.607, 0.613, 0.619, 0.626, 0.632, 0.639, 0.646, 0.653,
+			0.66, 0.668, 0.675, 0.683, 0.691, 0.699, 0.707, 0.716, 0.725, 0.734, 0.743, 0.752, 0.761, 0.771, 0.781, 0.791,
+			0.801, 0.811, 0.822, 0.833, 0.844, 0.855, 0.867, 0.878, 0.89, 0.902, 0.914, 0.927, 0.939, 0.952, 0.965, 0.979,
+			0.992, 1.006, 1.02, 1.034, 1.048, 1.062, 1.077, 1.092, 1.107, 1.122, 1.137, 1.152, 1.168, 1.184, 1.2, 1.216,
+			1.232, 1.248, 1.265, 1.281, 1.298, 1.315, 1.332, 1.349, 1.366, 1.383, 1.401, 1.418, 1.435, 1.453, 1.47, 1.488,
+			1.506, 1.523, 1.541, 1.559, 1.576, 1.594, 1.611, 1.629, 1.647, 1.664, 1.682, 1.699, 1.716, 1.734, 1.751, 1.768,
+			1.785, 1.802, 1.819, 1.836, 1.852, 1.869, 1.885, 1.901, 1.917, 1.933, 1.949, 1.965, 1.98, 1.995, 2.01, 2.025,
+			2.04, 2.055, 2.069, 2.083, 2.097, 2.111, 2.125, 2.138, 2.152, 2.165, 2.178, 2.19, 2.203, 2.215, 2.227, 2.239,
+			2.25, 2.262, 2.273, 2.284, 2.295, 2.306, 2.316, 2.326, 2.336, 2.346, 2.356, 2.365, 2.374, 2.383, 2.392, 2.401,
+			2.41, 2.418, 2.426, 2.434, 2.442, 2.449, 2.457, 2.464, 2.471, 2.478, 2.485, 2.491, 2.498, 2.504, 2.51, 2.516,
+			2.522, 2.528, 2.534, 2.539, 2.544, 2.55, 2.555, 2.559, 2.564, 2.569, 2.574, 2.578, 2.582, 2.587, 2.591, 2.595,
+			2.599, 2.602, 2.606, 2.61, 2.613, 2.617, 2.62, 2.623
+		];
 
-        function calculateFinalChance() {
-            // Get input values
-            const strParam = parseInt(document.getElementById('strParam').value);
-            const skillChance = parseFloat(document.getElementById('skillChance').value);
-            const buffPerArray = document.getElementById('buffPerArray').value.split(',').map(Number);
-            const buffDiffArray = document.getElementById('buffDiffArray').value.split(',').map(Number);
-            const defBuffPerArray = document.getElementById('defBuffPerArray').value.split(',').map(Number);
-            const defBuffDiffArray = document.getElementById('defBuffDiffArray').value.split(',').map(Number);
+		function calculateFinalChance() {
+			// Get input values
+			const strParam = parseInt(document.getElementById('strParam').value);
+			const skillChance = parseFloat(document.getElementById('skillChance').value);
+			const buffPerArray = document.getElementById('buffPerArray').value.split(',').map(Number);
+			const buffDiffArray = document.getElementById('buffDiffArray').value.split(',').map(Number);
+			const defBuffPerArray = document.getElementById('defBuffPerArray').value.split(',').map(Number);
+			const defBuffDiffArray = document.getElementById('defBuffDiffArray').value.split(',').map(Number);
 			const maxLimitChecked = document.getElementById('maxLimit').checked;
 			const trialCount = parseInt(document.getElementById('trialCount').value);
 
-            // Calculate buff percentage multiplier
-            let buffPer = 1.0;
-            for (let buff of buffPerArray) {
-                buffPer *= (1 + buff / 100);
-            }
+			// Calculate buff percentage multiplier
+			let buffPer = 1.0;
+			for (let buff of buffPerArray) {
+				buffPer *= (1 + buff / 100);
+			}
 
-            // Sum up buff differences
-            let buffDiff = 0.0;
-            for (let buff of buffDiffArray) {
-                buffDiff += buff;
-            }
+			// Sum up buff differences
+			let buffDiff = 0.0;
+			for (let buff of buffDiffArray) {
+				buffDiff += buff;
+			}
 			
 			// Calculate def buff percentage multiplier
-            let defBuffPer = 1.0;
-            for (let buff of defBuffPerArray) {
-                defBuffPer *= (1 + buff / 100);
-            }
+			let defBuffPer = 1.0;
+			for (let buff of defBuffPerArray) {
+				defBuffPer *= (1 + buff / 100);
+			}
 
-            // Sum up def buff differences
-            let defBuffDiff = 0.0;
-            for (let buff of defBuffDiffArray) {
-                defBuffDiff += buff;
-            }
+			// Sum up def buff differences
+			let defBuffDiff = 0.0;
+			for (let buff of defBuffDiffArray) {
+				defBuffDiff += buff;
+			}
 
-            // const finalChance = Math.round((skillChance * strBonus[strParam] * buffPer + buffDiff) * 10);
-            // Calculate final chance
+			// const finalChance = Math.round((skillChance * strBonus[strParam] * buffPer + buffDiff) * 10);
+			// Calculate final chance
 			const attackChance = Math.round((strBonus[strParam] * skillChance * buffPer + buffDiff) * 10)
-            const chance = defBuffPer * buffPer * strBonus[strParam] * skillChance + defBuffDiff + buffDiff;
+			const chance = defBuffPer * buffPer * strBonus[strParam] * skillChance + defBuffDiff + buffDiff;
 			const finalChance = maxLimitChecked ? Math.min(chance, 90) : chance;
 
-            // Display result
-            document.getElementById('attackChance').textContent = `Шанс у атакующего: ${attackChance.toFixed(3)}`;
-            document.getElementById('attackerChance').textContent = `Атакующий - Сумма шанс Физ. Крит. Атк. Физ. умений: ${((buffPer - 1) * 100.).toFixed(3)}`;
-            document.getElementById('targetDefence').textContent = `Цель - Сумма шанс получения урона от Физ. Крит. Атк.: ${((defBuffPer - 1) * 100.).toFixed(3)}`;
-            document.getElementById('result').textContent = `Финальный шанс: ${finalChance.toFixed(3)}`;
-        
+			// Display result
+			document.getElementById('attackChance').textContent = `Шанс у атакующего: ${attackChance.toFixed(3)}`;
+			document.getElementById('attackerChance').textContent = `Атакующий - Сумма шанс Физ. Крит. Атк. Физ. умений: ${((buffPer - 1) * 100.).toFixed(3)}`;
+			document.getElementById('targetDefence').textContent = `Цель - Сумма шанс получения урона от Физ. Крит. Атк.: ${((defBuffPer - 1) * 100.).toFixed(3)}`;
+			document.getElementById('result').textContent = `Финальный шанс: ${finalChance.toFixed(3)}`;
+		
 			// Loop to simulate critical hits
-            let critCount = 0;
-            for (let i = 0; i < trialCount; i++) {
-                if (Math.random() * 100 <= finalChance) {
-                    critCount++;
-                }
-            }
+			let critCount = 0;
+			for (let i = 0; i < trialCount; i++) {
+				if (Math.random() * 100 <= finalChance) {
+					critCount++;
+				}
+			}
 			
 			// Display critical hit count
-            document.getElementById('critCount').textContent = `Количество критических атак в ${trialCount} попытках: ${critCount}`;
+			document.getElementById('critCount').textContent = `Количество критических атак в ${trialCount} попытках: ${critCount}`;
 		}
-    </script>
+	</script>
 </body>
 </html>
