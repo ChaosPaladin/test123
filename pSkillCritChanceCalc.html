@@ -116,8 +116,8 @@
 
 			// Display result
 			document.getElementById('attackChance').textContent = `Шанс у атакующего (Alt + T): ${attackChance.toFixed(3)}`;
-			document.getElementById('attackerChance').textContent = `Атакующий - Сумма шанс Физ. Крит. Атк. Физ. умений (Подробно): ${((buffPer - 1) * 100.).toFixed(3)}`;
-			document.getElementById('targetDefence').textContent = `Цель - Сумма шанс получения урона от Физ. Крит. Атк. (Подробно): ${((defBuffPer - 1) * 100.).toFixed(3)}`;
+			document.getElementById('attackerChance').textContent = `Атакующий - шанс Физ. Крит. Атк. Физ. умений (Подробно): ${((buffPer - 1) * 100.).toFixed(3)}`;
+			document.getElementById('targetDefence').textContent = `Цель - шанс получения урона от Физ. Крит. Атк. (Подробно): ${((defBuffPer - 1) * 100.).toFixed(3)}`;
 			document.getElementById('result').textContent = `Финальный шанс: ${finalChance.toFixed(3)}`;
 		
 			// Loop to simulate critical hits
