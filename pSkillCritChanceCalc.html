@@ -33,10 +33,10 @@
 		<input type="text" id="buffDiffArray" name="buffDiffArray" placeholder="200,300"><br>
 		
 		<!-- P. Skill Crit. Defence Chance Buff Percent Array (Comma-separated) -->
-		<label for="defBuffPerArray">Цель - (%) Шанс получения урона от Физ. Крит. Атк. (Через ,): </label>
+		<label for="defBuffPerArray">Цель - (%) Шанс получения крит. урона от физ. умений (Через ,): </label>
 		<input type="text" id="defBuffPerArray" name="defBuffPerArray" placeholder="-5,-10,-15"><br>
 		<!-- P. Skill Crit. Defence Chance Buff Diff Array (Comma-separated) -->
-		<label for="defBuffDiffArray">Цель - (+) Шанс получения урона от Физ. Крит. Атк. (Через ,): </label>
+		<label for="defBuffDiffArray">Цель - (+) Шанс получения крит. урона от физ. умений (Через ,): </label>
 		<input type="text" id="defBuffDiffArray" name="defBuffDiffArray" placeholder="-200,-300"><br>
 		
 		<!-- Checkbox to toggle max limit of 90% -->
@@ -117,7 +117,7 @@
 			// Display result
 			document.getElementById('attackChance').textContent = `Шанс у атакующего (Alt + T): ${attackChance.toFixed(3)}`;
 			document.getElementById('attackerChance').textContent = `Атакующий - шанс Физ. Крит. Атк. Физ. умений (Подробно): ${((buffPer - 1) * 100.).toFixed(3)}`;
-			document.getElementById('targetDefence').textContent = `Цель - шанс получения урона от Физ. Крит. Атк. (Подробно): ${((defBuffPer - 1) * 100.).toFixed(3)}`;
+			document.getElementById('targetDefence').textContent = `Цель - шанс получения крит. урона от физ. умений (Подробно): ${((defBuffPer - 1) * 100.).toFixed(3)}`;
 			document.getElementById('result').textContent = `Финальный шанс: ${finalChance.toFixed(3)}`;
 		
 			// Loop to simulate critical hits
